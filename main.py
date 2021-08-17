@@ -20,7 +20,6 @@ def go(config: DictConfig):
         # This was passed on the command line as a comma-separated list of steps
         steps_to_execute = config["main"]["execute_steps"].split(",")
     else:
-        assert isinstance(config["main"]["execute_steps"], list)
         steps_to_execute = config["main"]["execute_steps"]
 
     # Download step
@@ -53,7 +52,7 @@ def go(config: DictConfig):
     if "check_data" in steps_to_execute:
 
         _ = mlflow.run(
-            os.path.join(root_path, "check"),
+            os.path.join(root_path, "check_data"),
             "main",
             parameters={
                 "reference_artifact":config["data"]["reference_dataset"],
@@ -100,10 +99,11 @@ def go(config: DictConfig):
     if "evaluate" in steps_to_execute:
 
         _ = mlflow.run(
-            os.join.path(root_path, "evaluate"),
+            os.path.join(root_path, "evaluate"),
             "main",
             parameters={
-                "model_export":config["random_forest_pipeline"]["export_artifact"],
+                "model_export":
+                        f"{config['random_forest_pipeline']['export_artifact']}:latest",
                 "test_data":"data_test.csv:latest"
             }
         )
